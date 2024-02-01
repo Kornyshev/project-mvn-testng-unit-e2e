@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="EndToEndTestingSuite">
+    <listeners>
+        <listener class-name="org.example.e2e.tests.listeners.E2ETestListener"/>
+    </listeners>
+    <test name="MainPageTestSuite">
+        <classes>
+            <class name="org.example.e2e.tests.MainPageTests"/>
+        </classes>
+    </test>
+</suite>

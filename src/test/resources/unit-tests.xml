@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="UnitTests">
+    <listeners>
+        <listener class-name="org.example.unit.listeners.UnitTestListener"/>
+    </listeners>
+    <test name="CalculatorUnitTests">
+        <classes>
+            <class name="org.example.unit.tests.CalculatorUnitTests"/>
+        </classes>
+    </test>
+</suite>

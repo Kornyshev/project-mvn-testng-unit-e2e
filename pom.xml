@@ -1,0 +1,206 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>project-mvn-testng-unit-e2e</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <name>project-mvn-testng-unit-e2e</name>
+    <url>http://maven.apache.org</url>
+
+    <!--
+    Команды, которыми можно запустить в отдельности unit тесты и e2e тесты.
+    mvn clean test-compile failsafe:integration-test site
+    mvn clean test site
+    -->
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lombok.version>1.18.26</lombok.version>
+        <slf4j-api.version>2.0.5</slf4j-api.version>
+        <logback-classic.version>1.4.12</logback-classic.version>
+        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
+
+        <testng.version>7.9.0</testng.version>
+        <allure.version>2.25.0</allure.version>
+        <allure-testng.version>2.21.0</allure-testng.version>
+        <aspectj.version>1.9.21</aspectj.version>
+        <allure-maven.version>2.10.0</allure-maven.version>
+
+        <selenium-java.version>4.17.0</selenium-java.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
+        <jackson-databind.version>2.16.1</jackson-databind.version>
+    </properties>
+
+    <!--
+    <dependencyManagement>
+    Используется в родительском pom файле для задания версий артефактов от
+    которых зависит проект потомок. В этом случае в проекте потомке версии
+    артефактов можно не задавать.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-bom</artifactId>
+                <version>${allure.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <suiteXmlFiles>
+                        <!-- TestNG Suite XML Files -->
+                        <suiteXmlFile>src/test/resources/unit-tests.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <argLine>
+                        -Dfile.encoding=${project.build.sourceEncoding}
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <suiteXmlFiles>
+                        <!-- TestNG Suite XML Files for e2e tests -->
+                        <suiteXmlFile>src/test/resources/e2e-tests.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <argLine>
+                        -Dfile.encoding=${project.build.sourceEncoding}
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure-testng.version}</reportVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
